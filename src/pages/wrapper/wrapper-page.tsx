@@ -1,11 +1,10 @@
-import React, { Fragment, ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import classNames from 'classnames';
 
 import { Footer } from '../../components/footer';
 import { Header } from '../../components/header/header';
-import { Loader } from '../../components/loader';
 import { Message } from '../../components/message';
 import { fetchCategories } from '../../redux/reducers/books-reducer';
 import { toggleOpenMenu } from '../../redux/reducers/menu-reducer';
@@ -21,7 +20,6 @@ export const WrapperPage: React.FC<{ child: ReactNode }> = ({ child }): JSX.Elem
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   useEffect(() => {
-    // if (error === null) dispatch(fetchBooks()); // eslint-disable-next-line react-hooks/exhaustive-deps
     dispatch(fetchCategories()); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -35,22 +33,19 @@ export const WrapperPage: React.FC<{ child: ReactNode }> = ({ child }): JSX.Elem
   };
 
   return (
-    <Fragment>
-      <Loader />
-      <section
-        role='button'
-        onKeyPress={() => {}}
-        tabIndex={0}
-        className={classNames('wrapper-page', status)}
-        onClick={onHandleWrapper}
-      >
-        <Header />
-        <div className='wrapper-page__content'>
-          <Message />
-          {child}
-        </div>
-        <Footer />
-      </section>
-    </Fragment>
+    <section
+      role='button'
+      onKeyPress={() => {}}
+      tabIndex={0}
+      className={classNames('wrapper-page', status)}
+      onClick={onHandleWrapper}
+    >
+      <Header />
+      <div className='wrapper-page__content'>
+        <Message />
+        {child}
+      </div>
+      <Footer />
+    </section>
   );
 };

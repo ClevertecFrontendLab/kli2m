@@ -59,9 +59,6 @@ export const booksSlice = createSlice({
     builder
       .addCase(fetchBooks.pending, (state) => {
         state.status = 'loading';
-        state.booksArray = [];
-        state.filterBooks = [];
-        state.mutEntities = [];
         state.error = null;
       })
       .addCase(fetchBooks.fulfilled, (state, action: PayloadAction<BookType[]>) => {
@@ -96,15 +93,10 @@ export const booksSlice = createSlice({
       .addCase(fetchBooks.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error;
-        state.booksArray = [];
-        state.filterBooks = [];
       })
       .addCase(fetchCategories.pending, (state) => {
         state.status = 'loading';
         state.error = null;
-        state.categories = [];
-        state.booksArray = [];
-        state.filterBooks = [];
       })
       .addCase(fetchCategories.fulfilled, (state, action: PayloadAction<CategoriesType[]>) => {
         state.status = 'idle';
@@ -119,16 +111,11 @@ export const booksSlice = createSlice({
       .addCase(fetchCategories.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error;
-        state.categories = [];
-        state.booksArray = [];
-        state.filterBooks = [];
       })
       .addCase(fetchBookById.pending, (state) => {
         state.status = 'loading';
         state.error = null;
         state.book = null;
-        state.booksArray = [];
-        state.filterBooks = [];
       })
       .addCase(fetchBookById.fulfilled, (state, action: PayloadAction<BookType>) => {
         state.book = action.payload;

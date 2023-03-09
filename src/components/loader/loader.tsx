@@ -10,9 +10,10 @@ import './loader.scss';
 
 export const Loader: React.FC = () => {
   const status = useSelector((state: RootState) => state.books.status);
+  const regStatus = useSelector((state: RootState) => state.reg.status);
 
   return (
-    <section data-test-id='loader' className={classNames('loader', status)}>
+    <section data-test-id='loader' className={classNames('loader', status, regStatus)}>
       <Lottie animationData={loaderAnimation} loop={true} />
     </section>
   );

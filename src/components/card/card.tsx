@@ -14,7 +14,7 @@ const Hightlight = (str: string, filter: string): string | any => {
   if (!filter) return str;
   const regexp = new RegExp(filter, 'ig');
   const matchValue = str.match(regexp);
-
+ 
   if (matchValue) {
     return str.split(regexp).map((s, index, array) => {
       if (index < array.length - 1) {
