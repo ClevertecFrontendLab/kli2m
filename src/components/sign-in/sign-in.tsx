@@ -69,12 +69,12 @@ export const SignIn: React.FC = (): JSX.Element => {
             {statusCode ? (
               <div className='form__forgot_box'>
                 <p className='message'>{error?.message}</p>
-                <NavLink className='forgot' to={ROUTES_NAMES.FORGOT_PASS}>
+                <NavLink className='forgot' to={ROUTES_NAMES.RESET_PASS}>
                   Восстановить ?
                 </NavLink>
               </div>
             ) : (
-              <NavLink className='form__forgot' to={ROUTES_NAMES.FORGOT_PASS}>
+              <NavLink className='form__forgot' to={ROUTES_NAMES.RESET_PASS}>
                 Забыли логин или пароль?
               </NavLink>
             )}

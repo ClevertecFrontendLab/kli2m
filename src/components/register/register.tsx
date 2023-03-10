@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 
 import { ROUTES_NAMES } from '../../constants/routes';
@@ -44,13 +44,6 @@ export const Register: React.FC = (): JSX.Element => {
           {stateForm.steps.map((step, ind) => (
             <FormReg key={`${ind +1}`} step={step} isActive={ind === stateForm.index} />
           ))}
-
-          <div className='form__reg-box'>
-            <span className='form__reg-box_question'>Есть учётная запись?</span>
-            <NavLink className='form__reg-box_link' to={ROUTES_NAMES.AUTH}>
-              войти
-            </NavLink>
-          </div>
         </Fragment>
       ) : error === null && statusCode === 200 ? (
         <ModalResponse

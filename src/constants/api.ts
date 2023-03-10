@@ -6,3 +6,4 @@ export const GET_CATEGORIES_API = `${HOST}/api/categories`;
 export const POST_REGISTER_API = `${HOST}/api/auth/local/register`;
 export const POST_AUTH_API = `${HOST}/api/auth/local`;
 export const POST_FORGOT_PASSWORD_API = `${HOST}/api/auth/forgot-password`;
+export const POST_RESET_PASSWORD_API = `${HOST}/api/auth/reset-password`;

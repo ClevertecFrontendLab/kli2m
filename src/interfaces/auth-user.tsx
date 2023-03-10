@@ -11,5 +11,11 @@ export interface PostAuthType {
 }
 
 export interface AuthResType {
-  data: AuthUserType
+  data: AuthUserType;
+}
+
+export interface PostResetPassType {
+  password: string;
+  passwordConfirmation  : string;
+  code: string;
 }

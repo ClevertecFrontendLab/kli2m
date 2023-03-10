@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
-import { Controller,useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import MaskedInput from 'react-text-mask';
 import { yupResolver } from '@hookform/resolvers/yup';
 import classNames from 'classnames';
@@ -8,6 +9,7 @@ import * as yup from 'yup';
 
 import { PHONE_MASK } from '../../constants/mask';
 import { REGEXP_NUMBER, REGEXP_STRING, REGEXP_UPPER_STRING } from '../../constants/reg-expressions';
+import { ROUTES_NAMES } from '../../constants/routes';
 import { setNextStep, Step } from '../../redux/reducers/reg-reducer';
 
 import './form-reg.scss';
@@ -121,6 +123,12 @@ export const FormReg: React.FC<{ step: Step; isActive: boolean }> = ({ step, isA
         ))}
       </div>
       <input className='form__submit' type='submit' value={step.btnName} />
+      <div className='form__reg-box'>
+        <span className='form__reg-box_question'>Есть учётная запись?</span>
+        <NavLink className='form__reg-box_link' to={ROUTES_NAMES.AUTH}>
+          войти
+        </NavLink>
+      </div>
     </form>
   );
 };

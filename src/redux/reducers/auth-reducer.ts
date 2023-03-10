@@ -1,8 +1,8 @@
 import { createAsyncThunk, createEntityAdapter, createSlice, PayloadAction, SerializedError } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-import { POST_AUTH_API } from '../../constants/api';
-import { AuthResType,AuthUserType, PostAuthType, RegErrType } from '../../interfaces';
+import { POST_AUTH_API, POST_FORGOT_PASSWORD_API, POST_RESET_PASSWORD_API } from '../../constants/api';
+import { AuthResType, AuthUserType, PostAuthType, PostResetPassType,RegErrType } from '../../interfaces';
 
 export interface UserAuthState {
   status: string;
@@ -25,6 +25,34 @@ export const fetchAuth = createAsyncThunk('auth', async (data: PostAuthType) => 
 
   try {
     response = await await axios.post(POST_AUTH_API, data);
+
+    return response;
+  } catch (error: any) {
+    response = error.response.data;
+  }
+
+  return response;
+});
+
+export const fetchSendEmail = createAsyncThunk('sendEmail', async (data: string) => {
+  let response;
+
+  try {
+    response = await await axios.post(POST_FORGOT_PASSWORD_API, { email: data });
+
+    return response;
+  } catch (error: any) {
+    response = error.response.data;
+  }
+
+  return response;
+});
+
+export const fetchResetPassword = createAsyncThunk('resetPassword', async (data: PostResetPassType) => {
+  let response;
+
+  try {
+    response = await await axios.post(POST_RESET_PASSWORD_API,  data );
 
     return response;
   } catch (error: any) {
@@ -75,6 +103,44 @@ export const authSlice = createSlice({
         state.status = 'idle';
       })
       .addCase(fetchAuth.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error;
+        state.isAuth = false;
+        state.user = null;
+      })
+      .addCase(fetchSendEmail.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+        state.isAuth = false;
+        state.user = null;
+      })
+      .addCase(fetchSendEmail.fulfilled, (state, action: PayloadAction<{ data: { ok: boolean } }>) => {
+        if (action.payload.data.ok) {
+          state.statusCode = 200;
+          state.error = null;
+        } else state.statusCode = 400;
+        state.status = 'idle';
+      })
+      .addCase(fetchSendEmail.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error;
+        state.isAuth = false;
+        state.user = null;
+      })
+      .addCase(fetchResetPassword.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+        state.isAuth = false;
+        state.user = null;
+      })
+      .addCase(fetchResetPassword.fulfilled, (state, action: PayloadAction<AuthResType>) => {
+        if (action.payload.data) {
+          state.statusCode = 200;
+          state.error = null;
+        } else state.statusCode = 400;
+        state.status = 'idle';
+      })
+      .addCase(fetchResetPassword.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error;
         state.isAuth = false;

@@ -52,9 +52,15 @@ export const schemaFour = yup
       .typeError('Must be a string')
       .required('Required field')
       .matches(REGEXP_PASSWORD, 'Does not comply with the rule'),
-    confirmPassword: yup
+    passwordConfirmation: yup
       .string()
       .oneOf([yup.ref('password')], "Passwords don't match")
       .required('Required field'),
+  })
+  .required();
+
+export const schemaFive = yup
+  .object({
+    email: yup.string().email('Enter the correct email').required('Required field'),
   })
   .required();

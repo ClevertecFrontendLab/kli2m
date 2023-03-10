@@ -29,7 +29,7 @@ export interface UserRegState {
   stateForm: {
     index: number;
     steps: Step[];
-    inputData: yup.InferType<any>;
+    inputData: any;
   };
 }
 
