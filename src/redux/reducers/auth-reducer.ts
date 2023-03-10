@@ -2,24 +2,36 @@ import { createAsyncThunk, createEntityAdapter, createSlice, PayloadAction, Seri
 import axios from 'axios';
 
 import { POST_AUTH_API } from '../../constants/api';
-import { AuthUserType } from '../../interfaces';
+import { AuthResType,AuthUserType, PostAuthType, RegErrType } from '../../interfaces';
 
 export interface UserAuthState {
   status: string;
   isAuth: boolean;
   error: SerializedError | null;
+  statusCode: number | null;
+  user: AuthUserType | null;
 }
 
 const initialState: UserAuthState = {
   status: 'idle',
   isAuth: false,
   error: null,
+  user: null,
+  statusCode: null,
 };
 
-export const fetchAuth = createAsyncThunk('auth', async () => {
-  const resAuth = await axios.post(POST_AUTH_API);
+export const fetchAuth = createAsyncThunk('auth', async (data: PostAuthType) => {
+  let response;
 
-  return resAuth.data;
+  try {
+    response = await await axios.post(POST_AUTH_API, data);
+
+    return response;
+  } catch (error: any) {
+    response = error.response.data;
+  }
+
+  return response;
 });
 
 const authAdapter = createEntityAdapter();
@@ -31,26 +43,46 @@ export const authSlice = createSlice({
     setValueError: (state, action: PayloadAction<SerializedError | null>) => {
       state.error = action.payload;
     },
+    delResponseErrors: (state) => {
+      state.error = null;
+      state.statusCode = null;
+      state.user = null;
+      state.isAuth = false;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAuth.pending, (state) => {
         state.status = 'loading';
         state.error = null;
+        state.isAuth = false;
+        state.user = null;
       })
-      .addCase(fetchAuth.fulfilled, (state, action: PayloadAction<AuthUserType>) => {
+      .addCase(fetchAuth.fulfilled, (state, action: PayloadAction<AuthResType | RegErrType>) => {
+        state.error = null;
+        const tempResponse = action.payload;
 
-        state.isAuth = true;
+        if (tempResponse.data === null) {
+          state.statusCode = tempResponse.error.status;
+          state.error = tempResponse.error;
+          state.isAuth = false;
+        } else {
+          state.statusCode = 200;
+          state.user = tempResponse.data;
+          state.isAuth = true;
+          state.error = null;
+        }
         state.status = 'idle';
       })
       .addCase(fetchAuth.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error;
         state.isAuth = false;
+        state.user = null;
       });
   },
 });
 
-export const { setValueError } = authSlice.actions;
+export const { setValueError, delResponseErrors } = authSlice.actions;
 
 export const authReducer = authSlice.reducer;

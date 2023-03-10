@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import { GET_ALL_BOOKS_API, GET_BOOK_BY_ID_API, GET_CATEGORIES_API } from '../../constants/api';
 import { BookType, CategoriesType, MutBooksType } from '../../interfaces/book';
-import { getFixString } from '../../utils';
+import { getFixString, getHeaders } from '../../utils';
 
 import { navSlice } from './navigation-reducer';
 
@@ -27,20 +27,20 @@ const initialState: BooksState = {
   filterBooks: [],
 };
 
-export const fetchBooks = createAsyncThunk('books', async () => {
-  const resBooks = await axios.get(GET_ALL_BOOKS_API);
+export const fetchBooks = createAsyncThunk('books', async (jwt:string) => {
+  const resBooks = await axios.get(GET_ALL_BOOKS_API, {headers: getHeaders(jwt)});
 
   return resBooks.data;
 });
 
-export const fetchCategories = createAsyncThunk('categories', async () => {
-  const resCategories = await axios.get(GET_CATEGORIES_API);
+export const fetchCategories = createAsyncThunk('categories', async (jwt: string) => {
+  const resCategories = await axios.get(GET_CATEGORIES_API,{headers: getHeaders(jwt)});
 
   return resCategories.data;
 });
 
-export const fetchBookById = createAsyncThunk('book', async (id: string) => {
-  const resBookById = await axios.get(`${GET_BOOK_BY_ID_API}${id}`);
+export const fetchBookById = createAsyncThunk('book', async ([id, jwt]:string[]) => {
+  const resBookById = await axios.get(`${GET_BOOK_BY_ID_API}${id}`,{headers: getHeaders(jwt)});
 
   return resBookById.data;
 });

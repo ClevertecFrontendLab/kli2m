@@ -15,6 +15,8 @@ export const Menu: React.FC<{ isHeader?: boolean }> = ({ isHeader = false }) => 
   const isOpenBooksMenu = useSelector((state: RootState) => state.menu.isOpenBooks);
   const isOpenMenu = useSelector((state: RootState) => state.menu.isOpen);
   const mutEntities = useSelector((state: RootState) => state.books.mutEntities);
+  const jwt = useSelector((state: RootState) => state.auth.user?.jwt);
+
 
   const error = useSelector((state: RootState) => state.books.error);
 
@@ -34,9 +36,9 @@ export const Menu: React.FC<{ isHeader?: boolean }> = ({ isHeader = false }) => 
     dispatch(toggleOpenBooks());
     navigate(`${ROUTES_NAMES.ALL_BOOKS}`);
 
-    if (mutEntities.length === 0) {
-      dispatch(fetchCategories());
-      if (error === null) dispatch(fetchBooks());
+    if (mutEntities.length === 0 && jwt) {
+      dispatch(fetchCategories(jwt));
+      if (error === null) dispatch(fetchBooks(jwt));
     }
   };
 

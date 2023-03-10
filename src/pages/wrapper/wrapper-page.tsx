@@ -16,16 +16,18 @@ import './wrapper-page.scss';
 export const WrapperPage: React.FC<{ child: ReactNode }> = ({ child }): JSX.Element => {
   const isMenuOpen = useSelector((state: RootState) => state.menu.isOpen);
   const status = useSelector((state: RootState) => state.books.status);
+  const jwt = useSelector((state: RootState) => state.auth.user?.jwt);
+  const isAuth = useSelector((state: RootState) => state.auth.isAuth);
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   useEffect(() => {
-    dispatch(fetchCategories()); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (jwt && isAuth) dispatch(fetchCategories(jwt)); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwt, isAuth]);
 
   useEffect(() => {
-    if (status === 'idle') dispatch(toggleDescending(false)); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+    if (status === 'idle' && isAuth) dispatch(toggleDescending(false)); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, isAuth]);
 
   const onHandleWrapper = (event: React.MouseEvent) => {
     event.stopPropagation();

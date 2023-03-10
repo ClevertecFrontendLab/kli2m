@@ -23,7 +23,6 @@ export interface Step {
 
 export interface UserRegState {
   status: string;
-  isAuth: boolean;
   error: SerializedError | null;
   userData: null | AuthUserType;
   statusCode: number | null;
@@ -36,7 +35,6 @@ export interface UserRegState {
 
 const initialState: UserRegState = {
   status: 'idle',
-  isAuth: false,
   error: null,
   statusCode: null,
   userData: null,
@@ -146,7 +144,6 @@ export const regSlice = createSlice({
       .addCase(fetchReg.pending, (state) => {
         state.status = 'loading';
         state.error = null;
-        state.isAuth = false;
       })
       .addCase(fetchReg.fulfilled, (state, action: PayloadAction<RegResType | RegErrType>) => {
         state.error = null;
@@ -154,18 +151,15 @@ export const regSlice = createSlice({
 
         if (tempResponse.data === null) {
           state.statusCode = tempResponse.error.status;
-          state.isAuth = false;
         } else {
           state.statusCode = 200;
           state.userData = tempResponse.data;
-          state.isAuth = true;
         }
         state.status = 'idle';
       })
       .addCase(fetchReg.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error;
-        state.isAuth = false;
       });
   },
 });

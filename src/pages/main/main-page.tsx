@@ -17,12 +17,14 @@ export const MainPage: React.FC = () => {
   const filterBooks = useSelector((state: RootState) => state.books.filterBooks);
   const categories = useSelector((state: RootState) => state.books.categories);
   const inputValue = useSelector((state: RootState) => state.nav.inputValue);
+const jwt = useSelector((state:RootState)=>state.auth.user?.jwt)
+const isAuth = useSelector((state:RootState)=>state.auth.isAuth)
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   useEffect(() => {
-    dispatch(fetchBooks()); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  if(isAuth && jwt)  dispatch(fetchBooks(jwt)); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwt,isAuth]);
 
   const params = useParams();
   const { category } = params;

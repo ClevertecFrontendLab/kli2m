@@ -15,12 +15,14 @@ export const Register: React.FC = (): JSX.Element => {
   const stateForm = useSelector((state: RootState) => state.reg.stateForm);
   const error = useSelector((state: RootState) => state.reg.error);
   const statusCode = useSelector((state: RootState) => state.reg.statusCode);
+  const isAuth = useSelector((state: RootState) => state.auth.isAuth);
+
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (stateForm.index > stateForm.steps.length - 1) dispatch(fetchReg(stateForm.inputData)); // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (stateForm.index > stateForm.steps.length - 1 && !isAuth) dispatch(fetchReg(stateForm.inputData)); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stateForm]);
 
   const onHandleToSignIn = () => {

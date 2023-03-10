@@ -26,6 +26,12 @@ export const CardView: React.FC = () => {
 
   const mutEntities = useSelector((state: RootState) => state.books.mutEntities);
 
+  const isAuth = useSelector((state: RootState) => state.auth.isAuth);
+
+  const jwt = useSelector((state: RootState) => state.auth.user?.jwt);
+
+
+
   const location = useLocation();
 
   const currLoc = location.pathname.split('/')[2];
@@ -38,9 +44,9 @@ export const CardView: React.FC = () => {
   const { id } = params;
 
   useEffect(() => {
-    if (id) dispatch(fetchBookById(id));
+    if (id && isAuth && jwt) dispatch(fetchBookById([id, jwt]));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuth]);
 
   const onHandleOpenReviews = () => {
     dispatch(toggleOpenReviews());
