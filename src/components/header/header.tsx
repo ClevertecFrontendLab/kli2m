@@ -53,6 +53,7 @@ export const Header: React.FC = () => {
             Профиль
           </NavLink>
           <NavLink
+            data-test-id='exit-button'
             onClick={onHandleLogOut}
             to={ROUTES_NAMES.LOGOUT}
             className={({ isActive }) => (isActive ? 'profile__exit active' : 'profile__exit')}

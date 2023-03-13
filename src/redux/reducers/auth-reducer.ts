@@ -2,7 +2,7 @@ import { createAsyncThunk, createEntityAdapter, createSlice, PayloadAction, Seri
 import axios from 'axios';
 
 import { POST_AUTH_API, POST_FORGOT_PASSWORD_API, POST_RESET_PASSWORD_API } from '../../constants/api';
-import { AuthResType, AuthUserType, PostAuthType, PostResetPassType,RegErrType } from '../../interfaces';
+import { AuthResType, AuthUserType, PostAuthType, PostResetPassType, RegErrType } from '../../interfaces';
 
 export interface UserAuthState {
   status: string;
@@ -28,7 +28,7 @@ export const fetchAuth = createAsyncThunk('auth', async (data: PostAuthType) => 
 
     return response;
   } catch (error: any) {
-    response = error.response.data;
+    response = error.response;
   }
 
   return response;
@@ -52,11 +52,11 @@ export const fetchResetPassword = createAsyncThunk('resetPassword', async (data:
   let response;
 
   try {
-    response = await await axios.post(POST_RESET_PASSWORD_API,  data );
+    response = await await axios.post(POST_RESET_PASSWORD_API, data);
 
     return response;
   } catch (error: any) {
-    response = error.response.data;
+    response = error.response;
   }
 
   return response;
@@ -85,26 +85,34 @@ export const authSlice = createSlice({
         state.error = null;
         state.isAuth = false;
         state.user = null;
+        state.statusCode = null;
+
       })
       .addCase(fetchAuth.fulfilled, (state, action: PayloadAction<AuthResType | RegErrType>) => {
         state.error = null;
         const tempResponse = action.payload;
 
-        if (tempResponse.data === null) {
-          state.statusCode = tempResponse.error.status;
-          state.error = tempResponse.error;
+        if (tempResponse.status === 400) {
+          state.statusCode = 400;
+          state.error = new Error('Неверный логин или пароль!');
           state.isAuth = false;
-        } else {
+        } else if (tempResponse.status === 200) {
           state.statusCode = 200;
           state.user = tempResponse.data;
           state.isAuth = true;
           state.error = null;
+        } else {
+          state.statusCode = 500;
+          state.error = new Error(tempResponse.error?.message);
+          state.isAuth = false;
         }
         state.status = 'idle';
       })
       .addCase(fetchAuth.rejected, (state, action) => {
+
         state.status = 'failed';
         state.error = action.error;
+        state.statusCode = Number(action.payload);
         state.isAuth = false;
         state.user = null;
       })
@@ -113,12 +121,22 @@ export const authSlice = createSlice({
         state.error = null;
         state.isAuth = false;
         state.user = null;
+        state.statusCode = null;
+
       })
-      .addCase(fetchSendEmail.fulfilled, (state, action: PayloadAction<{ data: { ok: boolean } }>) => {
-        if (action.payload.data.ok) {
-          state.statusCode = 200;
-          state.error = null;
-        } else state.statusCode = 400;
+      .addCase(fetchSendEmail.fulfilled, (state, action: PayloadAction<AuthResType>) => {
+
+        const tempResponse = action.payload
+
+        if (tempResponse.status) {
+          state.statusCode = tempResponse.status;
+         if( tempResponse.error) state.error = new Error('error')
+        } else if (tempResponse.error?.status) {
+          state.statusCode = tempResponse.error?.status;
+          state.error = tempResponse.error
+        } else if (tempResponse.statusCode) {
+          state.statusCode = tempResponse.statusCode;
+        }
         state.status = 'idle';
       })
       .addCase(fetchSendEmail.rejected, (state, action) => {
@@ -126,18 +144,25 @@ export const authSlice = createSlice({
         state.error = action.error;
         state.isAuth = false;
         state.user = null;
+        state.statusCode = 500;
       })
       .addCase(fetchResetPassword.pending, (state) => {
         state.status = 'loading';
         state.error = null;
         state.isAuth = false;
         state.user = null;
+        state.statusCode = null;
       })
       .addCase(fetchResetPassword.fulfilled, (state, action: PayloadAction<AuthResType>) => {
-        if (action.payload.data) {
-          state.statusCode = 200;
-          state.error = null;
-        } else state.statusCode = 400;
+        const tempResponse = action.payload
+
+        if (tempResponse.status) {
+          state.statusCode = tempResponse.status;
+        } else if (tempResponse.error?.status) {
+          state.statusCode = tempResponse.error?.status;
+        } else if (tempResponse.statusCode) {
+          state.statusCode = tempResponse.statusCode;
+        }
         state.status = 'idle';
       })
       .addCase(fetchResetPassword.rejected, (state, action) => {
@@ -145,6 +170,8 @@ export const authSlice = createSlice({
         state.error = action.error;
         state.isAuth = false;
         state.user = null;
+        state.statusCode = 500;
+
       });
   },
 });

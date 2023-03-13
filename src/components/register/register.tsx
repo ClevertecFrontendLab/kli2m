@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 
 import { ROUTES_NAMES } from '../../constants/routes';
-import { fetchReg, setStateFormIndex } from '../../redux/reducers/reg-reducer';
+import { fetchReg, setResetStatusCode, setStateFormIndex } from '../../redux/reducers/reg-reducer';
 import { RootState } from '../../redux/redux-store';
 import { FormReg } from '../form-reg';
 import { ModalResponse } from '../modal-response';
@@ -13,16 +13,17 @@ import './register.scss';
 
 export const Register: React.FC = (): JSX.Element => {
   const stateForm = useSelector((state: RootState) => state.reg.stateForm);
-  const error = useSelector((state: RootState) => state.reg.error);
   const statusCode = useSelector((state: RootState) => state.reg.statusCode);
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);
-
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (stateForm.index > stateForm.steps.length - 1 && !isAuth) dispatch(fetchReg(stateForm.inputData)); // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (stateForm.index > stateForm.steps.length - 1 && !isAuth) {
+      dispatch(fetchReg(stateForm.inputData));
+      dispatch(setStateFormIndex());
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stateForm]);
 
   const onHandleToSignIn = () => {
@@ -30,29 +31,29 @@ export const Register: React.FC = (): JSX.Element => {
   };
 
   const onHandleRepeat = () => {
-    dispatch(setStateFormIndex());
+    dispatch(setResetStatusCode());
   };
 
   return (
-    <section className='register'>
-      {error === null && statusCode === null ? (
+    <section className='register' >
+      {statusCode === null ? (
         <Fragment>
           <span className='register__title'>Регистрация</span>
 
           <span className='register__count'>{`${stateForm.index + 1} шаг из ${stateForm.steps.length} `}</span>
 
           {stateForm.steps.map((step, ind) => (
-            <FormReg key={`${ind +1}`} step={step} isActive={ind === stateForm.index} />
+            <FormReg key={`${ind + 1}`} step={step} isActive={ind === stateForm.index} />
           ))}
         </Fragment>
-      ) : error === null && statusCode === 200 ? (
+      ) : statusCode === 200 ? (
         <ModalResponse
           title='Регистрация успешна'
           text='Регистрация прошла успешно. Зайдите в личный кабинет, используя свои логин и пароль'
-          btnName='войти'
+          btnName='вход'
           action={onHandleToSignIn}
         />
-      ) : error === null && statusCode === 400 ? (
+      ) : statusCode === 400 ? (
         <ModalResponse
           title='Данные не сохранились'
           text='Такой логин или e-mail уже записан в системе. Попробуйте зарегистрироваться по другому логину или e-mail.'

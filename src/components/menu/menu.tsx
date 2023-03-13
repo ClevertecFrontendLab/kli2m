@@ -141,6 +141,7 @@ export const Menu: React.FC<{ isHeader?: boolean }> = ({ isHeader = false }) => 
             Профиль
           </NavLink>
           <NavLink
+            data-test-id='exit-button'
             onClick={onHandleLogOut}
             to={ROUTES_NAMES.LOGOUT}
             className={({ isActive }) => (isActive ? 'profile__exit active' : 'profile__exit')}

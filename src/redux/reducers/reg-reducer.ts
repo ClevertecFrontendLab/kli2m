@@ -29,7 +29,7 @@ export interface UserRegState {
   stateForm: {
     index: number;
     steps: Step[];
-    inputData: any;
+    inputData: RegUserType | any;
   };
 }
 
@@ -114,7 +114,7 @@ export const fetchReg = createAsyncThunk('reg', async (data: RegUserType) => {
 
     return response;
   } catch (error: any) {
-    response = error.response.data;
+    response = error.response;
   }
 
   return response;
@@ -135,6 +135,9 @@ export const regSlice = createSlice({
     },
     setStateFormIndex: (state) => {
       state.stateForm.index = 0;
+    },
+    setResetStatusCode: (state) => {
+      state.stateForm.index = 0;
       state.error = null;
       state.statusCode = null;
     },
@@ -144,26 +147,31 @@ export const regSlice = createSlice({
       .addCase(fetchReg.pending, (state) => {
         state.status = 'loading';
         state.error = null;
+        state.statusCode = null;
       })
       .addCase(fetchReg.fulfilled, (state, action: PayloadAction<RegResType | RegErrType>) => {
         state.error = null;
         const tempResponse = action.payload;
 
-        if (tempResponse.data === null) {
-          state.statusCode = tempResponse.error.status;
-        } else {
-          state.statusCode = 200;
-          state.userData = tempResponse.data;
+        if (tempResponse.status) {
+          state.statusCode = tempResponse.status;
+          if (tempResponse.data) state.userData = tempResponse.data;
+        } else if (tempResponse.error?.status) {
+          state.statusCode = tempResponse.error?.status;
+        } else if (tempResponse.statusCode) {
+          state.statusCode = tempResponse.statusCode;
         }
+
         state.status = 'idle';
       })
       .addCase(fetchReg.rejected, (state, action) => {
+        state.statusCode = Number(action.payload);
         state.status = 'failed';
         state.error = action.error;
       });
   },
 });
 
-export const { setValueError, setNextStep, setStateFormIndex } = regSlice.actions;
+export const { setValueError, setNextStep, setStateFormIndex, setResetStatusCode } = regSlice.actions;
 
 export const regReducer = regSlice.reducer;

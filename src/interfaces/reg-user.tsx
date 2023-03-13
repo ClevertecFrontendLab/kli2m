@@ -11,14 +11,25 @@ export interface RegUserType {
 
 export interface RegErrType {
   data: null;
-  error: {
+  error?: {
     status: number;
     name: string;
     message: string;
     details: any;
   };
+  status?: number;
+  statusCode?: number;
+
 }
 
 export interface RegResType {
-  data: AuthUserType
+  data: AuthUserType;
+  status?: number;
+  statusCode?: number;
+  error?: {
+    status: number;
+    name: string;
+    message: string;
+    details: any;
+  };
 }

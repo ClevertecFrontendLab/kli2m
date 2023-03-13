@@ -1,6 +1,5 @@
 import { CardView } from '../components/card-view';
-import { PasswordRecovery } from '../components/password-recovery/password-recovery';
-import { PasswordReset } from '../components/password-reset';
+import { PswForgot } from '../components/password-forgot';
 import { Register } from '../components/register';
 import { SignIn } from '../components/sign-in';
 import { Router } from '../interfaces/router';
@@ -8,7 +7,6 @@ import { MainPage } from '../pages/main';
 import { Offer } from '../pages/offer';
 import { Rules } from '../pages/rules';
 import { WrongPage } from '../pages/wrong-pages';
-
 
 export const ROUTES_NAMES = {
   MAIN_PAGE: '/books',
@@ -24,7 +22,6 @@ export const ROUTES_NAMES = {
   AUTH: '/auth',
   REGISTRATION: '/registration',
   FORGOT_PASS: '/forgot-pass',
-  RESET_PASS: '/reset-pass',
 };
 
 export const PRIVATE_ROUTES: Router[] = [
@@ -92,13 +89,8 @@ export const PUBLIC_ROUTES: Router[] = [
     exact: true,
   },
   {
-    path: ROUTES_NAMES.RESET_PASS,
-    component: PasswordRecovery,
-    exact: false,
-  },
-  {
     path: ROUTES_NAMES.FORGOT_PASS,
-    component: PasswordReset,
+    component: PswForgot,
     exact: false,
   },
   {

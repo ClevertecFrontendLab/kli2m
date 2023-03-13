@@ -11,7 +11,15 @@ export interface PostAuthType {
 }
 
 export interface AuthResType {
+  error?: {
+    status: number;
+    name: string;
+    message: string;
+    details: any;
+  };
   data: AuthUserType;
+  status?:number;
+  statusCode?:number;
 }
 
 export interface PostResetPassType {

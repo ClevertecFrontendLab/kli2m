@@ -8,7 +8,7 @@ export const ModalResponse: React.FC<{ title: string; text: string; btnName?: st
   title,
   action,
 }): JSX.Element => (
-  <section className='modal-response'>
+  <section className='modal-response' data-test-id='status-block'>
     <span className='modal-response__title'>{title}</span>
     <span className='modal-response__text'>{text}</span>
     {btnName && (

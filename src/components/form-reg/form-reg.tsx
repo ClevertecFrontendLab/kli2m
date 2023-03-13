@@ -39,26 +39,35 @@ export const FormReg: React.FC<{ step: Step; isActive: boolean }> = ({ step, isA
 
   type FormData = yup.InferType<typeof step.schema>;
 
-  const { register, handleSubmit, getFieldState, watch, control, reset } = useForm<FormData>({
+  const {
+    register,
+    formState: { errors, isValid, isDirty },
+    handleSubmit,
+    getFieldState,
+    control,
+    reset,
+    watch,
+  } = useForm<FormData>({
     mode: 'all',
     resolver: yupResolver(step.schema),
   });
 
   const onSubmit = (data: FormData) => {
     dispatch(setNextStep(data));
+    reset();
   };
+
   const onInvalid = () => {
-    reset(() => {}, {
-      keepIsSubmitted: false,
-      keepTouched: true,
-      keepErrors: false,
-      keepValues: false,
-      keepDirty: false,
-    });
+    reset();
   };
+
+  const onHandleClickSubmit = () => {};
+
+  const onHandleChangeAlert = (event: React.ChangeEvent<HTMLInputElement>, str: string) => {};
 
   return (
     <form
+      data-test-id='register-form'
       className={classNames('register__form form', isActive ? 'active' : 'no-active')}
       onSubmit={handleSubmit(onSubmit, onInvalid)}
     >
@@ -69,20 +78,14 @@ export const FormReg: React.FC<{ step: Step; isActive: boolean }> = ({ step, isA
               <Controller
                 name={item.schemaName}
                 control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
+                defaultValue={item.value}
+                render={({ field }) => (
                   <MaskedInput
+                    {...field}
                     mask={PHONE_MASK}
-                    showMask={true}
-                    keepCharPositions={true}
                     placeholderChar='X'
-                    guide={true}
-                    id='my-input-id'
                     className='label__input'
-                    defaultValue={item.value}
                     placeholder={item.placeholder}
-                    value={value}
-                    onChange={onChange}
-                    onBlur={onBlur}
                   />
                 )}
               />
@@ -92,37 +95,68 @@ export const FormReg: React.FC<{ step: Step; isActive: boolean }> = ({ step, isA
                 {...register(item.schemaName)}
                 defaultValue={item.value}
                 placeholder={item.placeholder}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => onHandleChangeAlert(event, item.schemaName)}
               />
             )}
 
             <span className={classNames('label__placeholder')}>{item.title}</span>
             {item.help ? (
-              <p className={classNames('label__message')}>
-                {watch(item.schemaName, false) && getFieldState(item.schemaName).error ? (
-                  getFieldState(item.schemaName).isDirty && item.schemaName === 'username' ? (
+              <p
+                data-test-id='hint'
+                className={classNames(
+                  'label__message',
+                  getFieldState(item.schemaName).isTouched &&
+                    getFieldState(item.schemaName).invalid &&
+                    !getFieldState(item.schemaName).isDirty
+                    ? 'hightlight'
+                    : ''
+                )}
+              >
+                {getFieldState(item.schemaName).isDirty ? (
+                  item.schemaName === 'username' ? (
                     getLogoWarningPhrase(watch(item.schemaName, false))
-                  ) : getFieldState(item.schemaName).isDirty && item.schemaName === 'password' ? (
-                    getPasswordWarningPhrase(watch(item.schemaName, false))
                   ) : (
+                    // : (
+                    //    item.schemaName === 'password' ? (
+                    //     getPasswordWarningPhrase(watch(item.schemaName, false))
+                    //   )
                     <span className='hightlight'>{item.help}</span>
                   )
                 ) : (
-                  <span>{item.help}</span>
+                  getFieldState(item.schemaName).isTouched &&
+                  getFieldState(item.schemaName).invalid &&
+                  !getFieldState(item.schemaName).isDirty &&
+                  getFieldState(item.schemaName).error?.message
                 )}
               </p>
             ) : (
-              <p className={classNames('label__message')}>
-                {getFieldState(item.schemaName).isDirty
-                  ? getFieldState(item.schemaName).isTouched && getFieldState(item.schemaName).invalid
-                    ? getFieldState(item.schemaName).error?.message
-                    : 'field need required'
-                  : ''}
+              <p
+                data-test-id='hint'
+                className={classNames(
+                  'label__message',
+                  getFieldState(item.schemaName).isTouched &&
+                    getFieldState(item.schemaName).invalid &&
+                    !getFieldState(item.schemaName).isDirty &&
+                    'hightlight'
+                )}
+              >
+                {getFieldState(item.schemaName).isTouched &&
+                  getFieldState(item.schemaName).invalid &&
+                  !getFieldState(item.schemaName).isDirty &&
+                  getFieldState(item.schemaName).error?.message}
               </p>
             )}
           </label>
         ))}
       </div>
-      <input className='form__submit' type='submit' value={step.btnName} />
+
+      <input
+        className='form__submit'
+        type='submit'
+        disabled={errors || !isValid || !isDirty ? false : true}
+        onClick={onHandleClickSubmit}
+        value={step.btnName}
+      />
       <div className='form__reg-box'>
         <span className='form__reg-box_question'>Есть учётная запись?</span>
         <NavLink className='form__reg-box_link' to={ROUTES_NAMES.AUTH}>

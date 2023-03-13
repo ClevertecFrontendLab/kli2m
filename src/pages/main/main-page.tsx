@@ -7,7 +7,7 @@ import { Card } from '../../components/card/card';
 import { Menu } from '../../components/menu';
 import { Navigation } from '../../components/navigation';
 import { NoFind } from '../../components/no-find';
-import { fetchBooks } from '../../redux/reducers/books-reducer';
+import { fetchBooks, fetchCategories } from '../../redux/reducers/books-reducer';
 import { RootState } from '../../redux/redux-store';
 
 import './main-page.scss';
@@ -21,6 +21,10 @@ const jwt = useSelector((state:RootState)=>state.auth.user?.jwt)
 const isAuth = useSelector((state:RootState)=>state.auth.isAuth)
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  useEffect(() => {
+    if (jwt && isAuth) dispatch(fetchCategories(jwt)); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
   if(isAuth && jwt)  dispatch(fetchBooks(jwt)); // eslint-disable-next-line react-hooks/exhaustive-deps

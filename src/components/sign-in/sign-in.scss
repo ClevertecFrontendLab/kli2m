@@ -5,7 +5,9 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 32px;
-  min-width: 416px;
+  width: 100%;
+    max-width: 416px;
+    min-width: 256px;
   &__title {
     font-weight: 700;
     font-size: 24px;
@@ -49,6 +51,7 @@
             border-bottom: 1px solid #f42c4f;
           }
         }
+    
         &__input:not(:placeholder-shown) ~ .label__placeholder {
           display: inline-block;
           font-weight: 500;
@@ -72,6 +75,22 @@
           line-height: 16px;
           letter-spacing: 0.2px;
           color: #a7a7a7;
+          &.error{
+            color: rgb(244, 44, 79);
+          }
+        }
+        & .action-eye{
+          border: none;
+          background: #ffffff;
+          position: absolute;
+          top: 16px;
+          right: 16px;
+          background: inherit;
+        }
+        & .valid-img{
+          position: absolute;
+          top: 16px;
+          right: 44px;
         }
       }
     }
@@ -147,5 +166,17 @@
         }
       }
     }
+  }
+}
+
+@media only screen and (min-width: 321px) and (max-width: 768px) {
+  .sign-in {
+
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .sign-in .form__reg-box{
+    flex-wrap: wrap;
   }
 }
