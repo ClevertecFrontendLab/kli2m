@@ -1,0 +1,29 @@
+.register {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+    max-width: 416px;
+    min-width: 256px;
+  &__title {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 30px;
+    color: #363636;
+  }
+  &__count {
+    margin-top: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 18px;
+    color: #363636;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .register .form__reg-box{
+    flex-wrap: wrap;
+  }
+}

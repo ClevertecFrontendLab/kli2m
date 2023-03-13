@@ -7,7 +7,7 @@ import { Card } from '../../components/card/card';
 import { Menu } from '../../components/menu';
 import { Navigation } from '../../components/navigation';
 import { NoFind } from '../../components/no-find';
-import { fetchBooks } from '../../redux/reducers/books-reducer';
+import { fetchBooks, fetchCategories } from '../../redux/reducers/books-reducer';
 import { RootState } from '../../redux/redux-store';
 
 import './main-page.scss';
@@ -17,12 +17,18 @@ export const MainPage: React.FC = () => {
   const filterBooks = useSelector((state: RootState) => state.books.filterBooks);
   const categories = useSelector((state: RootState) => state.books.categories);
   const inputValue = useSelector((state: RootState) => state.nav.inputValue);
+const jwt = useSelector((state:RootState)=>state.auth.user?.jwt)
+const isAuth = useSelector((state:RootState)=>state.auth.isAuth)
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   useEffect(() => {
-    dispatch(fetchBooks()); // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (jwt && isAuth) dispatch(fetchCategories(jwt)); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+  if(isAuth && jwt)  dispatch(fetchBooks(jwt)); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwt,isAuth]);
 
   const params = useParams();
   const { category } = params;

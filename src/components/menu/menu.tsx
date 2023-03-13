@@ -5,6 +5,7 @@ import { ThunkDispatch } from '@reduxjs/toolkit';
 import classNames from 'classnames';
 
 import { ROUTES_NAMES } from '../../constants/routes';
+import { delResponseErrors } from '../../redux/reducers/auth-reducer';
 import { fetchBooks, fetchCategories } from '../../redux/reducers/books-reducer';
 import { setIsOpenBooks, toggleOpenBooks, toggleOpenMenu } from '../../redux/reducers/menu-reducer';
 import { RootState } from '../../redux/redux-store';
@@ -15,6 +16,7 @@ export const Menu: React.FC<{ isHeader?: boolean }> = ({ isHeader = false }) => 
   const isOpenBooksMenu = useSelector((state: RootState) => state.menu.isOpenBooks);
   const isOpenMenu = useSelector((state: RootState) => state.menu.isOpen);
   const mutEntities = useSelector((state: RootState) => state.books.mutEntities);
+  const jwt = useSelector((state: RootState) => state.auth.user?.jwt);
 
   const error = useSelector((state: RootState) => state.books.error);
 
@@ -34,9 +36,9 @@ export const Menu: React.FC<{ isHeader?: boolean }> = ({ isHeader = false }) => 
     dispatch(toggleOpenBooks());
     navigate(`${ROUTES_NAMES.ALL_BOOKS}`);
 
-    if (mutEntities.length === 0) {
-      dispatch(fetchCategories());
-      if (error === null) dispatch(fetchBooks());
+    if (mutEntities.length === 0 && jwt) {
+      dispatch(fetchCategories(jwt));
+      if (error === null) dispatch(fetchBooks(jwt));
     }
   };
 
@@ -51,6 +53,9 @@ export const Menu: React.FC<{ isHeader?: boolean }> = ({ isHeader = false }) => 
 
   const onHandleClickOther = () => {
     dispatch(setIsOpenBooks(false));
+  };
+  const onHandleLogOut = () => {
+    dispatch(delResponseErrors());
   };
 
   return (
@@ -136,7 +141,8 @@ export const Menu: React.FC<{ isHeader?: boolean }> = ({ isHeader = false }) => 
             Профиль
           </NavLink>
           <NavLink
-            onClick={onHandleClickOther}
+            data-test-id='exit-button'
+            onClick={onHandleLogOut}
             to={ROUTES_NAMES.LOGOUT}
             className={({ isActive }) => (isActive ? 'profile__exit active' : 'profile__exit')}
           >

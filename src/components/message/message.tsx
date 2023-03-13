@@ -21,12 +21,12 @@ export const Message: React.FC<{ msg?: string }> = ({ msg }) => {
   };
 
   return (
-    <section data-test-id='error' className={classNames('message', messageVisibleClass)}>
-      <div className={classNames('message__content')}>
+    <section data-test-id='error' className={classNames('message-box', messageVisibleClass)}>
+      <div className={classNames('message-box__content')}>
         <img src={warningImg} alt='warning' />
         {msg ? msg : error?.message}
       </div>
-      <button className={classNames('message__btn-close')} type='button' onClick={onHandleCloseMessage}>
+      <button className={classNames('message-box__btn-close')} type='button' onClick={onHandleCloseMessage}>
         <img src={crossImg} alt='close' />
       </button>
     </section>
